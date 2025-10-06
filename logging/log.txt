@@ -1,3 +1,6 @@
 [2025-10-06T13:54:13.068Z] GET /api/health - 200 - 10ms
 [2025-10-06T13:54:13.634Z] GET /favicon.ico - 404 - 12ms
 [2025-10-06T13:54:49.012Z] GET /api/books - 200 - 9ms
+[2025-10-06T14:45:56.950Z] GET /api/health - 200 - 5ms
+[2025-10-06T14:45:56.972Z] GET /api/books - 200 - 9ms
+[2025-10-06T14:46:14.816Z] GET /api/health - 200 - 0ms

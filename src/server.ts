@@ -1,3 +1,6 @@
+// Register module aliases for production (must be first)
+import 'module-alias/register';
+
 import express, { Application } from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
