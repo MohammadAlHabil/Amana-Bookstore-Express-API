@@ -1,0 +1,48 @@
+# Files and directories to ignore during Railway deployment
+
+# This reduces deployment size and speeds up the process
+
+# Development files
+
+\*.md
+!README.md
+!RAILWAY_DEPLOYMENT.md
+
+# Documentation (optional - comment out if you want them)
+
+API_GUIDE.md
+ARCHITECTURE.md
+PROJECT_COMPLETE.md
+
+# Development dependencies
+
+.eslintrc.json
+.prettierrc.json
+nodemon.json
+
+# Test files
+
+_.test.ts
+_.spec.ts
+**tests**/
+
+# IDE
+
+.vscode/
+.idea/
+
+# Git
+
+.git/
+.gitignore
+
+# Logs (will be generated on server)
+
+logging/_.txt
+logs/_.log
+
+# TypeScript source (we only need compiled JS)
+
+# Commented out because Railway needs to build
+
+# src/

@@ -80,7 +80,8 @@ out
 
 # Nuxt.js build / generate output
 .nuxt
-dist
+# dist - commented out for Railway deployment (needs to build on server)
+# dist
 
 # Gatsby files
 .cache/
