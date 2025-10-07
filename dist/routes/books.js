@@ -123,7 +123,7 @@ router.get('/:id/reviews', (0, validator_1.validate)(idParamValidation), booksCo
 router.get('/featured', booksController_1.getFeaturedBooks);
 router.get('/:id', (0, validator_1.validate)(idParamValidation), booksController_1.getBookById);
 router.post('/', auth_1.requireAuth, (0, validator_1.validate)(bookValidationRules), booksController_1.createBook);
-router.put('/:id', (0, validator_1.validate)([...idParamValidation, ...updateBookValidationRules]), booksController_1.updateBook);
-router.delete('/:id', (0, validator_1.validate)(idParamValidation), booksController_1.deleteBook);
+router.put('/:id', auth_1.requireAuth, (0, validator_1.validate)([...idParamValidation, ...updateBookValidationRules]), booksController_1.updateBook);
+router.delete('/:id', auth_1.requireAuth, (0, validator_1.validate)(idParamValidation), booksController_1.deleteBook);
 exports.default = router;
 //# sourceMappingURL=books.js.map

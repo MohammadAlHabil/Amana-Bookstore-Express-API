@@ -114,6 +114,13 @@ curl -X PUT http://localhost:3000/api/books/1 \
 curl "http://localhost:3000/api/books?search=quantum&minPrice=50&maxPrice=150&inStock=true&page=1&limit=10"
 ```
 
+### 11.a Search Endpoint (alternate)
+
+```bash
+# Full-text search across title, author, description and tags
+curl "http://localhost:3000/api/books/search?q=quantum&page=1&limit=10"
+```
+
 ### 12. Paginated Results
 
 ```bash
@@ -135,6 +142,8 @@ curl "http://localhost:3000/api/books?page=1&limit=2"
 - `order` - Sort order: asc, desc
 - `page` - Page number (default: 1)
 - `limit` - Results per page (default: 10, max: 100)
+- `publishedAfter` - ISO date (YYYY-MM-DD) to include books published on or after this date
+- `publishedBefore` - ISO date (YYYY-MM-DD) to include books published on or before this date
 
 ### Reviews Endpoint Query Parameters
 
@@ -143,6 +152,35 @@ curl "http://localhost:3000/api/books?page=1&limit=2"
 - `verified` - Show only verified reviews (true/false)
 - `page` - Page number (default: 1)
 - `limit` - Results per page (default: 10, max: 100)
+
+## 🔎 Additional Endpoints
+
+- `GET /api/books/top-rated` - Returns the top 10 books ranked by a score calculated as (rating \* reviewCount). Useful to surface popular high-rated books.
+- `GET /api/books/search?q=<term>` - Alternate search endpoint that performs a focused full-text search over title, author, description and tags. Supports `page` and `limit` query params.
+- `GET /` - Returns a JSON array listing all discovered API endpoints (method and path). This is generated at runtime from the Express router stack and is useful for quick discovery during development.
+
+## 🔐 Protected Endpoints (API Token Required)
+
+The following endpoints require an API token and will return 401 Unauthorized if a valid token is not provided:
+
+- `POST /api/books` - Create a new book
+- `POST /api/reviews` - Create a new review
+
+Authentication options (pick one):
+
+- Authorization header (Bearer token):
+
+```bash
+ -H "Authorization: Bearer <YOUR_TOKEN_HERE>"
+```
+
+- X-API-KEY header:
+
+```bash
+ -H "X-API-KEY: <YOUR_TOKEN_HERE>"
+```
+
+The allowed tokens are configured by the server environment variable `ALLOWED_TOKENS` (comma-separated values). For local development you can set this in your environment before starting the server.
 
 ## 📊 Response Examples
 

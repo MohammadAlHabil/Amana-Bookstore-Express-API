@@ -41,7 +41,28 @@ app.get('/', (_req, res) => {
         success: true,
         message: 'Welcome to Amana Bookstore API',
         version: '1.0.0',
-        documentation: '/api/health',
+        endpoints: [
+            'GET /api/books',
+            'GET /api/books/:id',
+            'GET /api/books/top-rated',
+            'GET /api/books/featured',
+            'GET /api/books/search',
+            'GET /api/books/:id/reviews',
+            'POST /api/books',
+            'PUT /api/books/:id',
+            'DELETE /api/books/:id',
+            'GET /api/reviews',
+            'GET /api/reviews/:id',
+            'GET /api/reviews/book/:bookId',
+            'POST /api/reviews',
+            'PUT /api/reviews/:id',
+            'DELETE /api/reviews/:id',
+        ],
+        notes: [
+            'Protected endpoints require a token listed in ALLOWED_TOKENS (env).',
+            'Use publishedAfter / publishedBefore to filter books by publication date.',
+            'Examples: Authorization: Bearer token1  OR  X-API-KEY: token1',
+        ],
     });
 });
 app.use(errorHandler_1.notFoundHandler);

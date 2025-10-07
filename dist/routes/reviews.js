@@ -70,7 +70,7 @@ router.get('/', (0, validator_1.validate)(queryValidation), reviewsController_1.
 router.get('/:id', (0, validator_1.validate)(idParamValidation), reviewsController_1.getReviewById);
 router.get('/book/:bookId', (0, validator_1.validate)(bookIdParamValidation), reviewsController_1.getReviewsByBookId);
 router.post('/', auth_1.requireAuth, (0, validator_1.validate)(reviewValidationRules), reviewsController_1.createReview);
-router.put('/:id', (0, validator_1.validate)([...idParamValidation, ...updateReviewValidationRules]), reviewsController_1.updateReview);
-router.delete('/:id', (0, validator_1.validate)(idParamValidation), reviewsController_1.deleteReview);
+router.put('/:id', auth_1.requireAuth, (0, validator_1.validate)([...idParamValidation, ...updateReviewValidationRules]), reviewsController_1.updateReview);
+router.delete('/:id', auth_1.requireAuth, (0, validator_1.validate)(idParamValidation), reviewsController_1.deleteReview);
 exports.default = router;
 //# sourceMappingURL=reviews.js.map
