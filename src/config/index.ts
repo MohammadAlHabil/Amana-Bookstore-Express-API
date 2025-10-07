@@ -41,6 +41,14 @@ export const config = {
     booksPath: './data/books.json',
     reviewsPath: './data/reviews.json',
   },
+  // Authentication - comma separated tokens in env ALLOWED_TOKENS
+  auth: {
+    allowedTokens: (process.env['ALLOWED_TOKENS'] || '')
+      .split(',')
+      .map((t) => t.trim())
+      .filter(Boolean),
+    headerName: process.env['AUTH_HEADER_NAME'] || 'authorization',
+  },
 } as const;
 
 // Validate required environment variables

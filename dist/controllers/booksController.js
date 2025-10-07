@@ -36,7 +36,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteBook = exports.updateBook = exports.createBook = exports.getFeaturedBooks = exports.getBookById = exports.getAllBooks = void 0;
+exports.deleteBook = exports.updateBook = exports.createBook = exports.getFeaturedBooks = exports.getBookById = exports.searchBooks = exports.getReviewsForBook = exports.getTopRatedBooks = exports.getAllBooks = void 0;
 exports.updateBookRating = updateBookRating;
 const helpers_1 = require("../utils/helpers");
 const errorHandler_1 = require("../middleware/errorHandler");
@@ -73,6 +73,14 @@ exports.getAllBooks = (0, errorHandler_1.asyncHandler)(async (req, res) => {
             book.description.toLowerCase().includes(searchTerm) ||
             book.tags.some((tag) => tag.toLowerCase().includes(searchTerm)));
     }
+    if (query.publishedAfter) {
+        const after = new Date(query.publishedAfter).getTime();
+        books = books.filter((book) => new Date(book.datePublished).getTime() >= after);
+    }
+    if (query.publishedBefore) {
+        const before = new Date(query.publishedBefore).getTime();
+        books = books.filter((book) => new Date(book.datePublished).getTime() <= before);
+    }
     if (query.sortBy) {
         const sortField = query.sortBy;
         const order = query.order || 'asc';
@@ -95,6 +103,63 @@ exports.getAllBooks = (0, errorHandler_1.asyncHandler)(async (req, res) => {
     const response = {
         success: true,
         data: paginatedBooks,
+        pagination: (0, helpers_1.getPaginationMetadata)(total, page, limit),
+    };
+    res.status(200).json(response);
+});
+exports.getTopRatedBooks = (0, errorHandler_1.asyncHandler)(async (_req, res) => {
+    const books = await (0, helpers_1.loadBooks)();
+    const scored = books
+        .map((b) => ({ ...b, score: (b.rating || 0) * (b.reviewCount || 0) }))
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 10)
+        .map((b) => {
+        const { score, ...rest } = b;
+        void score;
+        return rest;
+    });
+    const response = {
+        success: true,
+        data: scored,
+    };
+    res.status(200).json(response);
+});
+exports.getReviewsForBook = (0, errorHandler_1.asyncHandler)(async (req, res) => {
+    const { id } = req.params;
+    const books = await (0, helpers_1.loadBooks)();
+    const book = books.find((b) => b.id === id);
+    if (!book) {
+        throw new errorHandler_1.CustomError('Book not found', 404);
+    }
+    const { loadReviews } = await Promise.resolve().then(() => __importStar(require('../utils/helpers')));
+    const reviews = await loadReviews();
+    const bookReviews = reviews.filter((r) => r.bookId === id);
+    bookReviews.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    const response = {
+        success: true,
+        data: bookReviews,
+    };
+    res.status(200).json(response);
+});
+exports.searchBooks = (0, errorHandler_1.asyncHandler)(async (req, res) => {
+    const q = (req.query['q'] || '').trim().toLowerCase();
+    if (!q) {
+        throw new errorHandler_1.CustomError('Search query (q) is required', 400);
+    }
+    const books = await (0, helpers_1.loadBooks)();
+    const results = books.filter((book) => {
+        return (book.title.toLowerCase().includes(q) ||
+            book.author.toLowerCase().includes(q) ||
+            book.description.toLowerCase().includes(q) ||
+            book.tags.some((t) => t.toLowerCase().includes(q)));
+    });
+    const page = Number(req.query['page']) || 1;
+    const limit = Math.min(Number(req.query['limit']) || config_1.default.pagination.defaultLimit, config_1.default.pagination.maxLimit);
+    const total = results.length;
+    const paginated = (0, helpers_1.paginate)(results, page, limit);
+    const response = {
+        success: true,
+        data: paginated,
         pagination: (0, helpers_1.getPaginationMetadata)(total, page, limit),
     };
     res.status(200).json(response);

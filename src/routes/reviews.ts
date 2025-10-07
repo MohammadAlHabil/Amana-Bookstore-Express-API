@@ -9,6 +9,7 @@ import {
   deleteReview,
 } from '../controllers/reviewsController';
 import { validate } from '../middleware/validator';
+import { requireAuth } from '../middleware/auth';
 
 const router = Router();
 
@@ -93,13 +94,18 @@ router.get('/:id', validate(idParamValidation), getReviewById);
 // GET /api/reviews/book/:bookId - Get reviews for a specific book
 router.get('/book/:bookId', validate(bookIdParamValidation), getReviewsByBookId);
 
-// POST /api/reviews - Create new review
-router.post('/', validate(reviewValidationRules), createReview);
+// POST /api/reviews - Create new review (protected)
+router.post('/', requireAuth, validate(reviewValidationRules), createReview);
 
 // PUT /api/reviews/:id - Update review by ID
-router.put('/:id', validate([...idParamValidation, ...updateReviewValidationRules]), updateReview);
+router.put(
+  '/:id',
+  requireAuth,
+  validate([...idParamValidation, ...updateReviewValidationRules]),
+  updateReview
+);
 
 // DELETE /api/reviews/:id - Delete review by ID
-router.delete('/:id', validate(idParamValidation), deleteReview);
+router.delete('/:id', requireAuth, validate(idParamValidation), deleteReview);
 
 export default router;

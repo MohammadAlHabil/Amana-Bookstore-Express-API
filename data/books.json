@@ -5,7 +5,7 @@
       "title": "Fundamentals of Classical Mechanics",
       "author": "Dr. Ahmad Al-Kindi",
       "description": "A comprehensive introduction to classical mechanics covering Newtonian dynamics, conservation laws, rotational motion, and oscillations with modern applications.",
-      "price": 89.99,
+      "price": 80,
       "image": "/images/book1.jpg",
       "isbn": "978-0123456789",
       "genre": [
@@ -21,34 +21,8 @@
       "pages": 654,
       "language": "English",
       "publisher": "Al-Biruni Academic Press",
-      "rating": 4.8,
-      "reviewCount": 23,
-      "inStock": true,
-      "featured": true
-    },
-    {
-      "id": "2",
-      "title": "Quantum Physics: Principles and Applications",
-      "author": "Prof. Fatima Al-Haytham",
-      "description": "An advanced textbook exploring quantum mechanics, wave functions, uncertainty principles, and quantum applications in modern technology.",
-      "price": 125.5,
-      "image": "/images/book2.jpg",
-      "isbn": "978-0234567890",
-      "genre": [
-        "Physics",
-        "Quantum Mechanics"
-      ],
-      "tags": [
-        "Quantum",
-        "Advanced Physics",
-        "Modern Physics"
-      ],
-      "datePublished": "2023-03-10",
-      "pages": 782,
-      "language": "English",
-      "publisher": "Ibn Sina Publications",
-      "rating": 4.9,
-      "reviewCount": 18,
+      "rating": 4.808333333333333,
+      "reviewCount": 24,
       "inStock": true,
       "featured": true
     },
@@ -77,6 +51,84 @@
       "reviewCount": 12,
       "inStock": false,
       "featured": false
+    },
+    {
+      "id": "book-1759863621097-zlwotd1",
+      "title": "Introduction to Organic Chemistry",
+      "author": "Dr. Layla Al-Farabi",
+      "description": "A comprehensive guide to organic chemistry for undergraduate students",
+      "price": 79.99,
+      "image": "/images/organic-chemistry.jpg",
+      "isbn": "978-0123468789",
+      "genre": [
+        "Chemistry",
+        "Science"
+      ],
+      "tags": [
+        "Organic",
+        "Chemistry",
+        "University"
+      ],
+      "datePublished": "2024-10-01",
+      "pages": 550,
+      "language": "English",
+      "publisher": "Al-Razi Academic Press",
+      "inStock": true,
+      "featured": true,
+      "rating": 0,
+      "reviewCount": 0
+    },
+    {
+      "id": "book-1759865612522-h55ckdn",
+      "title": "Introduction to Organic Chemistry",
+      "author": "Mohammad",
+      "description": "A comprehensive guide to organic chemistry for undergraduate students",
+      "price": 79.99,
+      "image": "/images/organic-chemistry.jpg",
+      "isbn": "978-0987654321",
+      "genre": [
+        "Chemistry",
+        "Science"
+      ],
+      "tags": [
+        "Organic",
+        "Chemistry",
+        "University"
+      ],
+      "datePublished": "2024-10-01",
+      "pages": 550,
+      "language": "English",
+      "publisher": "Al-Razi Academic Press",
+      "inStock": true,
+      "featured": true,
+      "rating": 0,
+      "reviewCount": 0
+    },
+    {
+      "id": "book-1759865643941-3zggyqq",
+      "title": "Introduction to Organic Chemistry",
+      "author": "Mohammad",
+      "description": "A comprehensive guide to organic chemistry for undergraduate students",
+      "price": 79.99,
+      "image": "/images/organic-chemistry.jpg",
+      "isbn": "978-0985654321",
+      "genre": [
+        "Chemistry",
+        "Science"
+      ],
+      "tags": [
+        "Organic",
+        "Chemistry",
+        "University"
+      ],
+      "datePublished": "2024-10-01",
+      "pages": 550,
+      "language": "English",
+      "publisher": "Al-Razi Academic Press",
+      "inStock": true,
+      "featured": true,
+      "rating": 0,
+      "reviewCount": 0
     }
   ]
 }

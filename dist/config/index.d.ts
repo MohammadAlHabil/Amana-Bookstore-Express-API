@@ -23,6 +23,10 @@ export declare const config: {
         readonly booksPath: "./data/books.json";
         readonly reviewsPath: "./data/reviews.json";
     };
+    readonly auth: {
+        readonly allowedTokens: string[];
+        readonly headerName: string;
+    };
 };
 export default config;
 //# sourceMappingURL=index.d.ts.map

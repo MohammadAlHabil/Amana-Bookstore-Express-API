@@ -77,6 +77,9 @@ export interface BookQueryParams {
   maxPrice?: number;
   inStock?: boolean | string;
   featured?: boolean | string;
+  // ISO date strings to filter by publication date range (inclusive)
+  publishedAfter?: string;
+  publishedBefore?: string;
   search?: string;
   sortBy?: 'price' | 'rating' | 'datePublished' | 'title';
   order?: 'asc' | 'desc';

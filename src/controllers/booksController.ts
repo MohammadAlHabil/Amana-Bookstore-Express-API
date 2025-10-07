@@ -6,6 +6,7 @@ import {
   UpdateBookRequest,
   ApiResponse,
   PaginatedResponse,
+  Review,
 } from '../types';
 import {
   loadBooks,
@@ -65,6 +66,17 @@ export const getAllBooks = asyncHandler(async (req: Request, res: Response): Pro
     );
   }
 
+  // Filter by published date range (inclusive)
+  if (query.publishedAfter) {
+    const after = new Date(query.publishedAfter).getTime();
+    books = books.filter((book) => new Date(book.datePublished).getTime() >= after);
+  }
+
+  if (query.publishedBefore) {
+    const before = new Date(query.publishedBefore).getTime();
+    books = books.filter((book) => new Date(book.datePublished).getTime() <= before);
+  }
+
   // Apply sorting
   if (query.sortBy) {
     const sortField = query.sortBy;
@@ -99,6 +111,101 @@ export const getAllBooks = asyncHandler(async (req: Request, res: Response): Pro
   const response: PaginatedResponse<Book> = {
     success: true,
     data: paginatedBooks,
+    pagination: getPaginationMetadata(total, page, limit),
+  };
+
+  res.status(200).json(response);
+});
+
+/**
+ * Get top-rated books (by rating * reviewCount)
+ */
+export const getTopRatedBooks = asyncHandler(
+  async (_req: Request, res: Response): Promise<void> => {
+    const books = await loadBooks();
+
+    type ScoreBook = Book & { score: number };
+
+    const scored = (books as ScoreBook[])
+      .map((b) => ({ ...b, score: (b.rating || 0) * (b.reviewCount || 0) }))
+      .sort((a: ScoreBook, b: ScoreBook) => b.score - a.score)
+      .slice(0, 10)
+      .map((b: ScoreBook) => {
+        const { score, ...rest } = b;
+        void score;
+        return rest as Book;
+      });
+
+    const response: ApiResponse<Book[]> = {
+      success: true,
+      data: scored,
+    };
+
+    res.status(200).json(response);
+  }
+);
+
+/**
+ * Get reviews for a specific book (by book id)
+ */
+export const getReviewsForBook = asyncHandler(
+  async (req: Request, res: Response): Promise<void> => {
+    const { id } = req.params;
+
+    const books = await loadBooks();
+    const book = books.find((b) => b.id === id);
+
+    if (!book) {
+      throw new CustomError('Book not found', 404);
+    }
+
+    const { loadReviews } = await import('../utils/helpers');
+    const reviews: Review[] = await loadReviews();
+
+    const bookReviews = reviews.filter((r) => r.bookId === id);
+    bookReviews.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+    const response: ApiResponse<Review[]> = {
+      success: true,
+      data: bookReviews,
+    };
+
+    res.status(200).json(response);
+  }
+);
+
+/**
+ * Search books by query string across title, author, description and tags
+ */
+export const searchBooks = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const q = ((req.query['q'] as string) || '').trim().toLowerCase();
+  if (!q) {
+    throw new CustomError('Search query (q) is required', 400);
+  }
+
+  const books = await loadBooks();
+
+  const results = books.filter((book) => {
+    return (
+      book.title.toLowerCase().includes(q) ||
+      book.author.toLowerCase().includes(q) ||
+      book.description.toLowerCase().includes(q) ||
+      book.tags.some((t) => t.toLowerCase().includes(q))
+    );
+  });
+
+  // pagination
+  const page = Number(req.query['page']) || 1;
+  const limit = Math.min(
+    Number(req.query['limit']) || config.pagination.defaultLimit,
+    config.pagination.maxLimit
+  );
+  const total = results.length;
+  const paginated = paginate(results, page, limit);
+
+  const response: PaginatedResponse<Book> = {
+    success: true,
+    data: paginated,
     pagination: getPaginationMetadata(total, page, limit),
   };
 

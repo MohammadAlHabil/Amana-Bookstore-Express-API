@@ -7,8 +7,12 @@ import {
   createBook,
   updateBook,
   deleteBook,
+  getTopRatedBooks,
+  getReviewsForBook,
+  searchBooks,
 } from '../controllers/booksController';
 import { validate } from '../middleware/validator';
+import { requireAuth } from '../middleware/auth';
 
 const router = Router();
 
@@ -36,14 +40,7 @@ const bookValidationRules = [
     .withMessage('Description must be between 10 and 2000 characters'),
   body('price').isFloat({ min: 0 }).withMessage('Price must be a positive number'),
   body('image').trim().notEmpty().withMessage('Image URL is required'),
-  body('isbn')
-    .trim()
-    .notEmpty()
-    .withMessage('ISBN is required')
-    .matches(
-      /^(?:ISBN(?:-1[03])?:? )?(?=[0-9X]{10}$|(?=(?:[0-9]+[- ]){3})[- 0-9X]{13}$|97[89][0-9]{10}$|(?=(?:[0-9]+[- ]){4})[- 0-9]{17}$)(?:97[89][- ]?)?[0-9]{1,5}[- ]?[0-9]+[- ]?[0-9]+[- ]?[0-9X]$/
-    )
-    .withMessage('Invalid ISBN format'),
+  body('isbn').trim().notEmpty().withMessage('ISBN is required'),
   body('genre').isArray({ min: 1 }).withMessage('Genre must be an array with at least one item'),
   body('genre.*').trim().notEmpty().withMessage('Genre items cannot be empty'),
   body('tags').isArray({ min: 1 }).withMessage('Tags must be an array with at least one item'),
@@ -115,11 +112,28 @@ const queryValidation = [
     .optional()
     .isFloat({ min: 0 })
     .withMessage('maxPrice must be a positive number'),
+  query('publishedAfter')
+    .optional()
+    .isISO8601()
+    .withMessage('publishedAfter must be a valid ISO8601 date'),
+  query('publishedBefore')
+    .optional()
+    .isISO8601()
+    .withMessage('publishedBefore must be a valid ISO8601 date'),
   query('sortBy')
     .optional()
     .isIn(['price', 'rating', 'datePublished', 'title'])
     .withMessage('Invalid sortBy field'),
   query('order').optional().isIn(['asc', 'desc']).withMessage('Order must be asc or desc'),
+];
+
+const searchValidation = [
+  query('q').trim().notEmpty().withMessage('Search query (q) is required'),
+  query('page').optional().isInt({ min: 1 }).withMessage('Page must be a positive integer'),
+  query('limit')
+    .optional()
+    .isInt({ min: 1, max: 100 })
+    .withMessage('Limit must be between 1 and 100'),
 ];
 
 /**
@@ -129,19 +143,33 @@ const queryValidation = [
 // GET /api/books - Get all books with filtering and pagination
 router.get('/', validate(queryValidation), getAllBooks);
 
+// GET /api/books/top-rated - Get top 10 books by rating * reviewCount
+router.get('/top-rated', getTopRatedBooks);
+
+// GET /api/books/search?q=... - Dedicated search endpoint
+router.get('/search', validate(searchValidation), searchBooks);
+
+// GET /api/books/:id/reviews - Get reviews for a specific book
+router.get('/:id/reviews', validate(idParamValidation), getReviewsForBook);
+
 // GET /api/books/featured - Get featured books
 router.get('/featured', getFeaturedBooks);
 
 // GET /api/books/:id - Get book by ID
 router.get('/:id', validate(idParamValidation), getBookById);
 
-// POST /api/books - Create new book
-router.post('/', validate(bookValidationRules), createBook);
+// POST /api/books - Create new book (protected)
+router.post('/', requireAuth, validate(bookValidationRules), createBook);
 
 // PUT /api/books/:id - Update book by ID
-router.put('/:id', validate([...idParamValidation, ...updateBookValidationRules]), updateBook);
+router.put(
+  '/:id',
+  requireAuth,
+  validate([...idParamValidation, ...updateBookValidationRules]),
+  updateBook
+);
 
 // DELETE /api/books/:id - Delete book by ID
-router.delete('/:id', validate(idParamValidation), deleteBook);
+router.delete('/:id', requireAuth, validate(idParamValidation), deleteBook);
 
 export default router;

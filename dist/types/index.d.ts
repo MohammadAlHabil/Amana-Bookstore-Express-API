@@ -56,6 +56,8 @@ export interface BookQueryParams {
     maxPrice?: number;
     inStock?: boolean | string;
     featured?: boolean | string;
+    publishedAfter?: string;
+    publishedBefore?: string;
     search?: string;
     sortBy?: 'price' | 'rating' | 'datePublished' | 'title';
     order?: 'asc' | 'desc';

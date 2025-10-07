@@ -31,6 +31,10 @@ exports.config = {
         booksPath: './data/books.json',
         reviewsPath: './data/reviews.json',
     },
+    auth: {
+        allowedTokens: (process.env['ALLOWED_TOKENS'] || '').split(',').map((t) => t.trim()).filter(Boolean),
+        headerName: process.env['AUTH_HEADER_NAME'] || 'authorization',
+    },
 };
 const requiredEnvVars = [];
 requiredEnvVars.forEach((envVar) => {
